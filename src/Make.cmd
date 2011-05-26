@@ -22,15 +22,15 @@ $(TARG): _go_.$O
 _go_.$O: $(GOFILES) $(PREREQ)
 	$(GC) $(GCIMPORTS) -o $@ $(GOFILES)
 
-install: $(TARGDIR)/$(TARG)
+install: $(DESTDIR)$(TARGDIR)/$(TARG)
 
-$(TARGDIR)/$(TARG): $(TARG)
-	mkdir -p $(TARGDIR) && cp -f $(TARG) $(TARGDIR)
+$(DESTDIR)$(TARGDIR)/$(TARG): $(TARG)
+	mkdir -p $(DESTDIR)$(TARGDIR) && cp -f $(TARG) $(DESTDIR)$(TARGDIR)
 
 CLEANFILES+=$(TARG) _test _testmain.go test.out build.out
 
 nuke: clean
-	rm -f $(TARGDIR)/$(TARG)
+	rm -f $(DESTDIR)$(TARGDIR)/$(TARG)
 
 # for gotest
 testpackage: _test/main.a

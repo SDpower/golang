@@ -35,7 +35,7 @@ ifeq ($(TARGDIR),)
 TARGDIR:=$(pkgdir)
 endif
 
-INSTALLFILES+=$(TARGDIR)/$(TARG).a
+INSTALLFILES+=$(DESTDIR)$(TARGDIR)/$(TARG).a
 
 # The rest of the cgo rules are below, but these variable updates
 # must be done here so they apply to the main rules.
@@ -50,7 +50,7 @@ GOFILES+=$(patsubst %.swig,_obj/%.go,$(patsubst %.swigcxx,%.swig,$(SWIGFILES)))
 OFILES+=$(patsubst %.swig,_obj/%_gc.$O,$(patsubst %.swigcxx,%.swig,$(SWIGFILES)))
 SWIG_PREFIX=$(subst /,-,$(TARG))
 SWIG_SOS+=$(patsubst %.swig,_obj/$(SWIG_PREFIX)-%.so,$(patsubst %.swigcxx,%.swig,$(SWIGFILES)))
-INSTALLFILES+=$(patsubst %.swig,$(TARGDIR)/swig/$(SWIG_PREFIX)-%.so,$(patsubst %.swigcxx,%.swig,$(SWIGFILES)))
+INSTALLFILES+=$(patsubst %.swig,$(DESTDIR)$(TARGDIR)/swig/$(SWIG_PREFIX)-%.so,$(patsubst %.swigcxx,%.swig,$(SWIGFILES)))
 endif
 
 PREREQ+=$(patsubst %,%.make,$(DEPS))
@@ -71,15 +71,15 @@ bench:
 	gotest -test.bench=. -test.run="Do not run tests"
 
 nuke: clean
-	rm -f $(TARGDIR)/$(TARG).a
+	rm -f $(DESTDIR)$(TARGDIR)/$(TARG).a
 
 testpackage-clean:
 	rm -f _test/$(TARG).a
 
 install: $(INSTALLFILES)
 
-$(TARGDIR)/$(TARG).a: _obj/$(TARG).a
-	@test -d $(QUOTED_GOROOT)/pkg && mkdir -p $(TARGDIR)/$(dir)
+$(DESTDIR)$(TARGDIR)/$(TARG).a: _obj/$(TARG).a
+	@test -d $(DESTDIR)$(QUOTED_GOROOT)/pkg && mkdir -p $(DESTDIR)$(TARGDIR)/$(dir)
 	cp _obj/$(TARG).a "$@"
 
 _go_.$O: $(GOFILES) $(PREREQ)
@@ -226,8 +226,8 @@ _obj/$(SWIG_PREFIX)-%.so: _obj/%_wrap.o
 _obj/$(SWIG_PREFIX)-%.so: _obj/%_wrapcxx.o
 	$(HOST_CXX) $(_CGO_CFLAGS_$(GOARCH)) -o $@ $^ $(SWIG_LDFLAGS) $(_CGO_LDFLAGS_$(GOOS)) $(_SWIG_LDFLAGS_$(GOOS))
 
-$(TARGDIR)/swig/$(SWIG_PREFIX)-%.so: _obj/$(SWIG_PREFIX)-%.so
-	@test -d $(QUOTED_GOROOT)/pkg && mkdir -p $(TARGDIR)/swig
+$(DESTDIR)$(TARGDIR)/swig/$(SWIG_PREFIX)-%.so: _obj/$(SWIG_PREFIX)-%.so
+	@test -d $(DESTDIR)$(QUOTED_GOROOT)/pkg && mkdir -p $(DESTDIR)$(TARGDIR)/swig
 	cp $< "$@"
 
 all: $(SWIG_SOS)

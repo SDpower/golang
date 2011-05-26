@@ -19,14 +19,14 @@ clean:
 	rm -f *.$(HOST_O) $(TARG) $(CLEANFILES)
 
 nuke: clean
-	rm -f "$(GOBIN)/$(TARG)"
+	rm -f "$(DESTDIR)$(GOBIN)/$(TARG)"
 
 ifneq ($(NOINSTALL),1)
-install: $(QUOTED_GOBIN)/$(TARG)
+install: $(DESTDIR)$(QUOTED_GOBIN)/$(TARG)
 endif
 
-$(QUOTED_GOBIN)/$(TARG): $(TARG)
-	cp $(TARG) "$(GOBIN)"/$(TARG)
+$(DESTDIR)$(QUOTED_GOBIN)/$(TARG): $(TARG)
+	cp $(TARG) "$(DESTDIR)$(GOBIN)"/$(TARG)
 
 y.tab.h: $(YFILES)
 	bison -y $(HOST_YFLAGS) $(YFILES)

@@ -12,11 +12,11 @@ all: $(LIB)
 $(OFILES): $(HFILES)
 
 ifneq ($(NOINSTALL),1)
-install: $(QUOTED_GOROOT)/lib/$(LIB)
+install: $(DESTDIR)$(QUOTED_GOROOT)/lib/$(LIB)
 endif
 
-$(QUOTED_GOROOT)/lib/$(LIB): $(LIB)
-	cp $(LIB) "$(GOROOT)/lib/$(LIB)"
+$(DESTDIR)$(QUOTED_GOROOT)/lib/$(LIB): $(LIB)
+	cp $(LIB) "$(DESTDIR)$(GOROOT)/lib/$(LIB)"
 
 $(LIB): $(OFILES)
 	$(HOST_AR) rsc $(LIB) $(OFILES)
@@ -27,7 +27,7 @@ clean:
 	rm -f *.$(HOST_O) $(CLEANFILES)
 
 nuke: clean
-	rm -f "$(GOROOT)/lib/$(LIB)"
+	rm -f "$(DESTDIR)$(GOROOT)/lib/$(LIB)"
 
 y.tab.h: $(YFILES)
 	LANG=C LANGUAGE="en_US.UTF8" bison -v -y $(HOST_YFLAGS) $(YFILES)
